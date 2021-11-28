@@ -1,9 +1,6 @@
-import hashlib
 import csv
 import os
 import shutil
-import random
-import sys
 
 from pathlib import Path
 
@@ -51,6 +48,42 @@ def analyse_sequence(sequence):
             has_consecutive_subsequence, is_a_palindrome]
 
 
+def calculate_frequencies(sequence):
+    frequencies = {
+        'A': 0,
+        'C': 0,
+        'G': 0,
+        'T': 0
+    }
+
+    for i, v in enumerate(sequence):
+        frequencies[v] += 1
+
+    for k, v in frequencies.items():
+        frequencies[k] = frequencies[k] / SEQUENCE_SIZE
+
+    return frequencies
+
+
+def has_imbalanced_frequencies(frequencies):
+    for k, v in frequencies.items():
+        if frequencies[k] >= FREQUENCY_BALANCE_THRESHOLD:
+            return True
+    return False
+
+
+def has_consecutive_nucleobases(sequence):
+    return 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' in sequence or 'CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC' in sequence or \
+           'GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG' in sequence or 'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT' in sequence
+
+
+def is_palindrome(sequence):
+    for element in range(0, len(sequence) // 2):
+        if sequence[element] != sequence[SEQUENCE_SIZE - element - 1]:
+            return False
+    return True
+
+
 def analyse_results():
     output_file_name = os.path.join(OUTPUT_PATH, 'results.csv')
     with open(output_file_name, 'r') as f:
@@ -81,41 +114,6 @@ def analyse_results():
         print(f'Entries with long single-base sequences: {has_consecutive_count}. Long single-base data frequency:'
               f' {has_consecutive_count / line_count}')
         print(f'Palindrome entries: {palindrome_count}. Palindrome data frequency: {palindrome_count / line_count}')
-
-
-def calculate_frequencies(sequence):
-    frequencies = {
-        'A': 0,
-        'C': 0,
-        'G': 0,
-        'T': 0
-    }
-    for i, v in enumerate(sequence):
-        frequencies[v] += 1
-
-    for k, v in frequencies.items():
-        frequencies[k] = frequencies[k] / SEQUENCE_SIZE
-
-    return frequencies
-
-
-def has_imbalanced_frequencies(frequencies):
-    for k, v in frequencies.items():
-        if frequencies[k] >= FREQUENCY_BALANCE_THRESHOLD:
-            return True
-    return False
-
-
-def has_consecutive_nucleobases(sequence):
-    return 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' in sequence or 'CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC' in sequence or \
-           'GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG' in sequence or 'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT' in sequence
-
-
-def is_palindrome(sequence):
-    for element in range(0, len(sequence) // 2):
-        if sequence[element] != sequence[SEQUENCE_SIZE - element - 1]:
-            return False
-    return True
 
 
 analyse_input()

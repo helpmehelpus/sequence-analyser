@@ -2,16 +2,30 @@ import argparse
 import hashlib
 import os
 import random
-import sys
 
 from pathlib import Path
-
-import string
 
 INPUT_PATH = '../input/'
 SEQUENCE_SIZE = 4096
 POSSIBLE_NUCLEOBASES = ['A', 'C', 'G', 'T']
 IMBALANCE = [[35, 25, 25, 15], [15, 35, 25, 25], [25, 15, 35, 25], [25, 25, 15, 35]]
+
+
+def generate_batch(number_of_entries, surprisal=False):
+    for x in range(number_of_entries):
+        if surprisal:
+            chance = random.uniform(0, 1)
+            if 0 <= chance < 0.1:
+                generate_imbalanced_sequence()
+            elif 0.1 <= chance < 0.2:
+                generate_consecutive_sequence()
+            elif 0.2 <= chance < 0.3:
+                generate_palindrome_sequence()
+            else:
+                generate_sequence()
+        else:
+            generate_sequence()
+    print("Generated entries: ", number_of_entries)
 
 
 def generate_sequence():
@@ -58,23 +72,6 @@ def store_sequence(sequence):
         fp = open(file_name, 'x')
         fp.write(sequence)
         fp.close()
-
-
-def generate_batch(number_of_entries, surprisal=False):
-    for x in range(number_of_entries):
-        if surprisal:
-            chance = random.uniform(0, 1)
-            if 0 <= chance < 0.1:
-                generate_imbalanced_sequence()
-            elif 0.1 <= chance < 0.2:
-                generate_consecutive_sequence()
-            elif 0.2 <= chance < 0.3:
-                generate_palindrome_sequence()
-            else:
-                generate_sequence()
-        else:
-            generate_sequence()
-    print("Generated entries: ", number_of_entries)
 
 
 parser = argparse.ArgumentParser(description='Generate input data for surprisal analysis')
