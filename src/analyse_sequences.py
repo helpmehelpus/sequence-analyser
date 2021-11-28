@@ -62,6 +62,9 @@ def analyse_results():
                 print("File header is: ", row)
                 line_count += 1
             else:
+                # Had to add this because on Windows a new line is being added upon each insertion
+                if not row:
+                    continue
                 line_count += 1
                 if row[5] == 'True':
                     surprising_count += 1
