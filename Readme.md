@@ -5,7 +5,8 @@ guanine (G), and thymine (T), that make up portions of DNA strands in search for
 Two scripts are present in this project:
 * `generate_sequences.py`: Populates an `input` folder with `txt` files, each of which containing a 4096-char string
 representing a segment of a DNA strand.
-* `analyse_sequences.py`: Analyses the `input` folder and, collecting data about each file.
+* `analyse_sequences.py`: Analyses the `input` folder, produces an `output/results.csv` file, and prints a brief
+analysis to the console.
 
 ### Surprising Sequences
 Our 4096-chars input segments of DNA are expected to contain roughly equal frequencies (25%) of the four nucleobases. 
