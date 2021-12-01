@@ -74,10 +74,17 @@ def store_sequence(sequence):
         fp.close()
 
 
+def check_positive(value):
+    int_value = int(value)
+    if int_value <= 0:
+        raise argparse.ArgumentTypeError(f'{value} is a negative number. Please supply a positive integer.')
+    return int_value
+
+
 parser = argparse.ArgumentParser(description='Generate input data for surprisal analysis')
 parser.add_argument('BatchSize',
                     metavar='batch_size',
-                    type=str,
+                    type=check_positive,
                     help='the number of data to create')
 parser.add_argument('-s',
                     '--surprisal',

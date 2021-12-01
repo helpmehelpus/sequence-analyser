@@ -86,6 +86,9 @@ def is_palindrome(sequence):
 
 def analyse_results():
     output_file_name = os.path.join(OUTPUT_PATH, 'results.csv')
+    if not os.path.isfile(output_file_name):
+        print("results.csv is not present. Please generate data first")
+        return
     with open(output_file_name, 'r') as f:
         reader = csv.reader(f, delimiter=',')
         line_count = -1
