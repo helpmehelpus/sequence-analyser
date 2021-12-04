@@ -8,33 +8,30 @@ from pathlib import Path
 INPUT_PATH = '../input/'
 SEQUENCE_SIZE = 4096
 POSSIBLE_NUCLEOBASES = ['A', 'C', 'G', 'T']
-IMBALANCE = [[35, 25, 25, 15], [15, 35, 25, 25], [25, 15, 35, 25], [25, 25, 15, 35]]
 
 
 def generate_batch(number_of_entries, surprisal=False):
     for x in range(number_of_entries):
         if surprisal:
             chance = random.uniform(0, 1)
-            if 0 <= chance < 0.1:
-                generate_imbalanced_sequence()
-            elif 0.1 <= chance < 0.2:
+            if 0 <= chance < 0.125:
+                generate_random_sequence()
+            elif 0.125 <= chance < 0.25:
                 generate_consecutive_sequence()
-            elif 0.2 <= chance < 0.3:
-                generate_palindrome_sequence()
             else:
-                generate_sequence()
+                generate_balanced_sequence()
         else:
-            generate_sequence()
+            generate_balanced_sequence()
     print("Generated entries: ", number_of_entries)
 
 
-def generate_sequence():
+def generate_balanced_sequence():
     sequence = ''.join(random.choices(POSSIBLE_NUCLEOBASES, k=SEQUENCE_SIZE))
     store_sequence(sequence)
 
 
-def generate_imbalanced_sequence():
-    sequence = ''.join(random.choices(POSSIBLE_NUCLEOBASES, weights=random.choice(IMBALANCE), k=SEQUENCE_SIZE))
+def generate_random_sequence():
+    sequence = ''.join(random.choices(POSSIBLE_NUCLEOBASES, weights=generate_random_weights(), k=SEQUENCE_SIZE))
     store_sequence(sequence)
 
 
@@ -51,6 +48,23 @@ def generate_consecutive_sequence():
 
     sequence = first_part + consecutive_part + final_part
     store_sequence(sequence)
+
+
+def generate_random_weights():
+    total = 100
+    imbalanced_weights = []
+    for i in range(3):
+        upper_bound = total - (4 - i - 1)
+        if upper_bound == 1:
+            imbalanced_weights.append(upper_bound)
+            total -= 1
+            continue
+        weight = random.randint(1, upper_bound)
+        imbalanced_weights.append(weight)
+        total -= weight
+
+    imbalanced_weights.append(total)
+    return imbalanced_weights
 
 
 def generate_palindrome_sequence():

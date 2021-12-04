@@ -2,12 +2,14 @@ import csv
 import os
 import shutil
 
+from math import log2
 from pathlib import Path
 
 INPUT_PATH = '../input/'
 OUTPUT_PATH = '../output/'
 SEQUENCE_SIZE = 4096
 FREQUENCY_BALANCE_THRESHOLD = 0.265
+CROSS_ENTROPY_THRESHOLD = 1.98
 
 
 def analyse_input():
@@ -21,8 +23,8 @@ def analyse_input():
 
     with open(output_file_name, 'w') as f:
         writer = csv.writer(f)
-        writer.writerow(['filename', 'freq_A', 'freq_B', 'freq_C', 'fred_D', 'is_surprising', 'is_imbalanced',
-                         'has_consecutive', 'is_palindrome'])
+        writer.writerow(['filename', 'freq_A', 'freq_C', 'freq_G', 'fred_T', 'cross_entropy', 'is_surprising',
+                         'is_imbalanced', 'has_consecutive', 'is_palindrome'])
 
         for dir_name, subdir_list, file_list in os.walk(INPUT_PATH):
             if len(file_list) == 0:
@@ -40,12 +42,13 @@ def analyse_input():
 
 def analyse_sequence(sequence):
     frequencies = calculate_frequencies(sequence)
+    cross_entropy = calculate_cross_entropy(list(frequencies.values()), list(frequencies.values()))
     is_imbalanced = has_imbalanced_frequencies(frequencies)
     has_consecutive_subsequence = has_consecutive_nucleobases(sequence)
     is_a_palindrome = is_palindrome(sequence)
-    is_surprising = is_imbalanced or has_consecutive_subsequence or is_a_palindrome
-    return [frequencies['A'], frequencies['C'], frequencies['G'], frequencies['T'], is_surprising, is_imbalanced,
-            has_consecutive_subsequence, is_a_palindrome]
+    is_surprising = cross_entropy <= CROSS_ENTROPY_THRESHOLD
+    return [frequencies['A'], frequencies['C'], frequencies['G'], frequencies['T'], cross_entropy, is_surprising,
+            is_imbalanced, has_consecutive_subsequence, is_a_palindrome]
 
 
 def calculate_frequencies(sequence):
@@ -63,6 +66,10 @@ def calculate_frequencies(sequence):
         frequencies[k] = frequencies[k] / SEQUENCE_SIZE
 
     return frequencies
+
+
+def calculate_cross_entropy(p, q):
+    return -sum([p[i]*log2(q[i]) for i in range(len(p))])
 
 
 def has_imbalanced_frequencies(frequencies):
@@ -102,13 +109,13 @@ def analyse_results():
                 if not row:
                     continue
                 line_count += 1
-                if row[5] == 'True':
-                    surprising_count += 1
                 if row[6] == 'True':
-                    imbalanced_count += 1
+                    surprising_count += 1
                 if row[7] == 'True':
-                    has_consecutive_count += 1
+                    imbalanced_count += 1
                 if row[8] == 'True':
+                    has_consecutive_count += 1
+                if row[9] == 'True':
                     palindrome_count += 1
 
         print("Finished analysing input data. Number of entries: ", line_count)
