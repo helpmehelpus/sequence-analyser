@@ -7,7 +7,7 @@ from pathlib import Path
 
 INPUT_PATH = '../input/'
 SEQUENCE_SIZE = 4096
-POSSIBLE_NUCLEOBASES = ['A', 'C', 'G', 'T']
+POSSIBLE_NUCLEOBASES = ['A', 'C', 'G', 'T', 'X', 'Y', 'W', 'Z']
 
 
 def generate_batch(number_of_entries, surprisal=False):

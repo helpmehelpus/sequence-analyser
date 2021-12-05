@@ -23,7 +23,7 @@ def analyse_input():
 
     with open(output_file_name, 'w') as f:
         writer = csv.writer(f)
-        writer.writerow(['filename', 'freq_A', 'freq_C', 'freq_G', 'fred_T', 'cross_entropy', 'is_surprising',
+        writer.writerow(['filename', 'freq_A', 'freq_C', 'freq_G', 'fred_T', 'freq_X', 'cross_entropy', 'is_surprising',
                          'is_imbalanced', 'has_consecutive', 'is_palindrome'])
 
         for dir_name, subdir_list, file_list in os.walk(INPUT_PATH):
@@ -47,8 +47,9 @@ def analyse_sequence(sequence):
     has_consecutive_subsequence = has_consecutive_nucleobases(sequence)
     is_a_palindrome = is_palindrome(sequence)
     is_surprising = cross_entropy <= CROSS_ENTROPY_THRESHOLD
-    return [frequencies['A'], frequencies['C'], frequencies['G'], frequencies['T'], cross_entropy, is_surprising,
-            is_imbalanced, has_consecutive_subsequence, is_a_palindrome]
+    return [frequencies['A'], frequencies['C'], frequencies['G'], frequencies['T'], frequencies['X'], frequencies['Y'],
+            frequencies['W'], frequencies['Z'], cross_entropy, is_surprising, is_imbalanced,
+            has_consecutive_subsequence, is_a_palindrome]
 
 
 def calculate_frequencies(sequence):
@@ -56,7 +57,11 @@ def calculate_frequencies(sequence):
         'A': 0,
         'C': 0,
         'G': 0,
-        'T': 0
+        'T': 0,
+        'X': 0,
+        'Y': 0,
+        'W': 0,
+        'Z': 0
     }
 
     for i, v in enumerate(sequence):
@@ -109,13 +114,13 @@ def analyse_results():
                 if not row:
                     continue
                 line_count += 1
-                if row[6] == 'True':
-                    surprising_count += 1
-                if row[7] == 'True':
-                    imbalanced_count += 1
-                if row[8] == 'True':
-                    has_consecutive_count += 1
                 if row[9] == 'True':
+                    surprising_count += 1
+                if row[10] == 'True':
+                    imbalanced_count += 1
+                if row[11] == 'True':
+                    has_consecutive_count += 1
+                if row[12] == 'True':
                     palindrome_count += 1
 
         print("Finished analysing input data. Number of entries: ", line_count)
